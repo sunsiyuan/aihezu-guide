@@ -46,6 +46,88 @@ sudo npx aihezu install codex
 sudo npx aihezu install gemini
 ```
 
+## VS Code 集成建议
+
+### 如果是我，我会怎么配
+
+- 先不往 `~/.zshrc` 里写 `ANTHROPIC_BASE_URL` 和 `ANTHROPIC_AUTH_TOKEN`
+- 先保留 `~/.claude/settings.json` 里的配置，直接试 VS Code 扩展能不能读取
+- 只有在扩展确实读不到时，才考虑用“启动这一次 VS Code 进程时临时带环境变量”的方式
+- 不建议把第三方中转地址和 key 做成长期全局环境变量
+
+### 推荐顺序
+
+1. 安装 VS Code 的 `Claude Code` 扩展
+2. 保持当前 `~/.claude/settings.json` 配置不变
+3. 直接在 VS Code 里执行 `Claude: Start Chat`
+4. 如果能正常工作，就停在这里
+5. 如果扩展读不到配置，再用临时启动命令
+
+### 临时启动当前这次 VS Code 的方式
+
+```bash
+ANTHROPIC_BASE_URL="http://122.191.109.46/api" \
+ANTHROPIC_AUTH_TOKEN="你的key" \
+code /path/to/project
+```
+
+这条命令的特点是：
+
+- 只影响这一次启动出来的 VS Code 进程
+- 不会把变量长期写进 `~/.zshrc`
+- 不会默认污染你之后所有 shell 和其他 Anthropic 相关工具
+
+### 不推荐的方式
+
+不建议这样做：
+
+```bash
+echo 'export ANTHROPIC_BASE_URL="..."' >> ~/.zshrc
+echo 'export ANTHROPIC_AUTH_TOKEN="..."' >> ~/.zshrc
+source ~/.zshrc
+```
+
+原因是：
+
+- 这是全局生效，不只是给 VS Code 用
+- key 会长期明文留在 shell 配置文件里
+- 以后其他工具也可能误用这个第三方链路
+- 排查问题时更难判断到底是谁继承了这些环境变量
+
+### 能不能写进 VS Code 的“默认启动配置”
+
+如果你说的是 `.vscode/launch.json`，那不合适。
+
+- `launch.json` 主要是给调试目标进程用的
+- 它不是“启动 VS Code 自己”的默认配置
+- Claude 扩展本身是否能拿到这些变量，关键在于 VS Code 应用进程启动时继承了什么环境
+
+如果你想做成“默认但不全局污染”的方案，更稳的是下面两种：
+
+- 写一个本地启动脚本，例如 `start-vscode-claude-proxy.sh`
+- 做一个 shell alias，例如 `code-claude-proxy`
+
+例如：
+
+```bash
+alias code-claude-proxy='ANTHROPIC_BASE_URL="http://122.191.109.46/api" ANTHROPIC_AUTH_TOKEN="你的key" code'
+```
+
+然后用：
+
+```bash
+code-claude-proxy /path/to/project
+```
+
+这比直接写进 `~/.zshrc` 的全局 `export` 更可控。
+
+### 这一节的实际结论
+
+- 先试 `~/.claude/settings.json`
+- 不行再用“临时启动这次 VS Code”的方式
+- 不建议把第三方中转变量做成系统长期默认环境
+- 而且当前目标仍然是 `HTTP`，所以即便 VS Code 集成跑通，也仍然只建议在低敏感项目里使用
+
 ## 执行前 Checklist
 
 - [ ] 我只打算配置 `Claude`
