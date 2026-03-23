@@ -118,11 +118,25 @@ ANTHROPIC_MODEL=opus claude
 - 常用 alias 包括 `sonnet`、`opus`、`haiku`。
 - 但在你的场景里，最终能不能切成功，还取决于这个第三方中转到底支持哪些模型。
 - 所以最稳的验证方法是：
-  - 先 `/status`
-  - 再 `/model sonnet` 或 `/model opus`
-  - 发一个低敏感测试请求
-  - 看是否正常返回
+- 先 `/status`
+- 再 `/model sonnet` 或 `/model opus`
+- 发一个低敏感测试请求
+- 看是否正常返回
 - 如果 `opus` 切不过去，不一定是 Claude Code 本身的问题，也可能是中转没有开通或没有映射对应模型。
+
+### 如果你想从这个 repo 里直接启动 VS Code
+
+这个 repo 里附带了一个脚本：
+
+[`start-vscode-claude-proxy.sh`](/Users/sun/Documents/aihezu-guide/start-vscode-claude-proxy.sh)
+
+它会从 `~/.claude/settings.json` 读取当前的 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和可选的 `model`，然后只把这些变量注入到这一次 VS Code 进程里。
+
+用法：
+
+```bash
+./start-vscode-claude-proxy.sh /path/to/project
+```
 
 ## VS Code 集成建议
 
@@ -131,6 +145,7 @@ ANTHROPIC_MODEL=opus claude
 - 先不往 `~/.zshrc` 里写 `ANTHROPIC_BASE_URL` 和 `ANTHROPIC_AUTH_TOKEN`
 - 先保留 `~/.claude/settings.json` 里的配置，直接试 VS Code 扩展能不能读取
 - 只有在扩展确实读不到时，才考虑用“启动这一次 VS Code 进程时临时带环境变量”的方式
+- 在这个 repo 里，优先可以直接用 [`start-vscode-claude-proxy.sh`](/Users/sun/Documents/aihezu-guide/start-vscode-claude-proxy.sh)
 - 不建议把第三方中转地址和 key 做成长期全局环境变量
 
 ### 推荐顺序
@@ -139,7 +154,22 @@ ANTHROPIC_MODEL=opus claude
 2. 保持当前 `~/.claude/settings.json` 配置不变
 3. 直接在 VS Code 里执行 `Claude: Start Chat`
 4. 如果能正常工作，就停在这里
-5. 如果扩展读不到配置，再用临时启动命令
+5. 如果扩展读不到配置，先用这个 repo 里的启动脚本
+6. 如果你不想用脚本，再用临时启动命令
+
+### 推荐脚本方式
+
+```bash
+./start-vscode-claude-proxy.sh /path/to/project
+```
+
+这个脚本会：
+
+- 从 `~/.claude/settings.json` 读取当前配置
+- 自动带上 `ANTHROPIC_BASE_URL`
+- 自动带上 `ANTHROPIC_AUTH_TOKEN`
+- 如果设置文件里已经有 `model`，也会一并带上
+- 只影响这一次启动出来的 VS Code 进程
 
 ### 临时启动当前这次 VS Code 的方式
 
