@@ -14,9 +14,10 @@
 |------|------|
 | [risk-assessment.md](./risk-assessment.md) | 风险判断：结论、一票否决、适用条件、它会改什么、执行前 Checklist |
 | [setup-guide.md](./setup-guide.md) | 操作指南：备份、安装、验证、模型切换、VS Code 集成、回滚 |
+| [troubleshooting.md](./troubleshooting.md) | 排查指南：按步骤验证 Cursor / Claude / Clash Verge 的问题，附结果记录模板 |
 | [test-records/](./test-records/) | 实测记录（按时间归档） |
 
-**推荐阅读顺序**：先看 `risk-assessment.md` 做出 go/no-go 判断，再按 `setup-guide.md` 操作。
+**推荐阅读顺序**：先看 `risk-assessment.md` 做出 go/no-go 判断，再按 `setup-guide.md` 操作；遇到问题时按 `troubleshooting.md` 一步一步排查。
 
 ## 核心原则
 
