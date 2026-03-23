@@ -46,6 +46,84 @@ sudo npx aihezu install codex
 sudo npx aihezu install gemini
 ```
 
+## Quick Start
+
+### 先完成最小配置
+
+```bash
+npx aihezu@2.8.8 config claude
+```
+
+确认 `~/.claude/settings.json` 已写入你要用的 `ANTHROPIC_BASE_URL` 和 `ANTHROPIC_AUTH_TOKEN`。
+
+### 日常启动 Claude Code
+
+```bash
+claude
+```
+
+然后先看当前状态：
+
+```text
+/status
+```
+
+### 快速切到 Sonnet
+
+在 Claude Code 里直接输入：
+
+```text
+/model sonnet
+```
+
+如果你想在启动时就指定：
+
+```bash
+claude --model sonnet
+```
+
+### 快速切到 Opus
+
+在 Claude Code 里直接输入：
+
+```text
+/model opus
+```
+
+如果你想在启动时就指定：
+
+```bash
+claude --model opus
+```
+
+### 如果你想固定默认模型
+
+不想每次手动切，可以只给这一个 Claude 启动链路设置：
+
+```bash
+ANTHROPIC_MODEL=sonnet claude
+```
+
+或：
+
+```bash
+ANTHROPIC_MODEL=opus claude
+```
+
+更长期一点，也可以在 Claude Code 的设置里配置 `model` 字段，或者用 shell alias 包一层，但不建议为了这个把第三方中转相关变量做成全局默认。
+
+### 和这个中转场景相关的注意点
+
+- 按 Anthropic 官方文档，Claude Code 支持 `/model <alias>`、`claude --model <alias>` 和 `ANTHROPIC_MODEL=<alias|name>` 这几种方式。
+- 常用 alias 包括 `sonnet`、`opus`、`haiku`。
+- 但在你的场景里，最终能不能切成功，还取决于这个第三方中转到底支持哪些模型。
+- 所以最稳的验证方法是：
+  - 先 `/status`
+  - 再 `/model sonnet` 或 `/model opus`
+  - 发一个低敏感测试请求
+  - 看是否正常返回
+- 如果 `opus` 切不过去，不一定是 Claude Code 本身的问题，也可能是中转没有开通或没有映射对应模型。
+
 ## VS Code 集成建议
 
 ### 如果是我，我会怎么配
